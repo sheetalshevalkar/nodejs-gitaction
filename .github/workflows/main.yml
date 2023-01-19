@@ -53,5 +53,5 @@ jobs:
           switches: -avzr --delete
           path: ./*
           remote_path: /var/www/my-app/
-          remote_host: <DEV_HOST>.compute.amazonaws.com
+          remote_host: <HOST>.compute.amazonaws.com
           remote_user: ubuntu
