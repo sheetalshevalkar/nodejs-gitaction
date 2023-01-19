@@ -1,0 +1,29 @@
+{
+  "name": "gitaction",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sheetalshevalkar/nodejs-gitaction.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sheetalshevalkar/nodejs-gitaction/issues"
+  },
+  "homepage": "https://github.com/sheetalshevalkar/nodejs-gitaction#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3"
+  },
+  "scripts": {
+    "test": "mocha ./test/* --exit"
+}
+}
