@@ -48,9 +48,12 @@ jobs:
       #run: npm run test
 
       - name: rsync deployments
-        uses: burnett01/rsync-deployments@5.1
-        with:
-          switches: -avzr --delete --exclude="" --include="" --filter=""
+        uses: appleboy/ssh-action@v0.1.2
+         with:
+          host: ${{secrets.SSH_HOST}}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          #switches:-avzr --delete --exclude="" --include="" --filter=""
           path: ./*
           remote_path: /var/www/my-app/
           
