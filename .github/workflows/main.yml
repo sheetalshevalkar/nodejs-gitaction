@@ -32,15 +32,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: SSH and deploy node app
-      uses: appleboy/ssh-action@master
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        port: ${{ secrets.SSH_PORT }}
-        script: |
-          cd ~/node-github-demo
-          git pull origin main
-          npm install --production
-          pm2 restart node-app
+        key: ${{ secrets.DEV_KEY }} 
+        known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+    - name: Adding Known Hosts
+      run: ssh-keyscan -H ${{ secrets.DEV_HOST }} >> ~/.ssh/known_hosts
+    - name: Deploy with rsync
+      run: rsync -avz ./dist/ ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }}:/project/
+    - name: run code
+      run: pm2 start index.js
+
+#script: |
+          #cd ~/node-github-demo
+          #git pull origin main
+         # npm install --production
+          #pm2 restart node-app
