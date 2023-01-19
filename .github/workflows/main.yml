@@ -1,10 +1,12 @@
-name: Node Github CI
+name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main]
 
+  workflow_dispatch:
 jobs:
   test:
 
@@ -27,25 +29,28 @@ jobs:
       env:
         CI: true
 
-  deploy:
-    needs: [test]
+  build:
+
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.DEV_KEY }} 
-        known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
-    - name: Adding Known Hosts
-      run: ssh-keyscan -H 43.205.192.225 >> ~/.ssh/known_hosts
-    - name: Deploy with rsync
-      run: rsync -R ./ ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }}:/project/
-    - name: run code
-      run: pm2 start index.js
+    if: github.ref == 'refs/heads/main'
 
-#script: |
-          #cd ~/node-github-demo
-          #git pull origin main
-         # npm install --production
-          #pm2 restart node-app
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: npm install
+      - run: npm run build -if--present
+      - run: npm run test
+
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzr --delete
+          path: ./*
+          remote_path: /var/www/my-app/
+          remote_host: <DEV_HOST>.compute.amazonaws.com
+          remote_user: ubuntu
